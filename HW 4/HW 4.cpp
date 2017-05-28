@@ -34,28 +34,23 @@ int indexCount;
 
 int main(int argc, char* argv[])
 {
-	OBJStreamLoader loader = OBJStreamLoader("C:/Users/Isaac/Dropbox/Coding Resources/wwnnsthl4k-LibertyStatue/LibertyStatue/LibertStatue.obj");
+	OBJStreamLoader loader = OBJStreamLoader("C:/Users/Isaac/Dropbox/Coding Resources/Object Files/cube.obj");
 	
 	//load the object:
 	object = loader.getVertexes();
 	indices = loader.getIndices();
 
-	vertexCount = loader.vertexCount();
+	vertexCount = 0;
 	indexCount = loader.indexCount();
 
-	/*for (int i = 0; i < loader.vertexCount(); i++) {
-		std::cout << object[i]<<" ";
-		if (i % 3 == 0 && i > 0) {
-			std::cout << "\n";
-		}
+	for (int i = 0; i < loader.vertexCount() - 2; i+=3) {
+		std::cout << "v: " << object[i] << " " << object[i + 1] << " " << object[i + 2] << "\n";
+		vertexCount++;
 	}
 
-	for (int i = 0; i < loader.indexCount(); i++) {
-		std::cout << indices[i] << " ";
-		if (i % 3 == 0 && i > 0) {
-			std::cout << "\n";
-		}
-	}*/
+	for (int i = 0; i < loader.indexCount() - 2; i += 3) {
+		std::cout << "f: " << indices[i] << " " << indices[i + 1] << " " << indices[i + 2] << "\n";
+	}
 
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);

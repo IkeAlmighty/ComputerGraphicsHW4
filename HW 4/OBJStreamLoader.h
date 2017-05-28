@@ -18,15 +18,25 @@ public:
 
 		std::string line;
 		while(getline(in, line)) {
-			if (nextType() == "v") {
-				vertexes.push_back(nextFloat());
-				vertexes.push_back(nextFloat());
-				vertexes.push_back(nextFloat());
+			std::string next = nextType();
+			if (next == "v") {
+				vertexes.push_back(nextFloat(line));
+				vertexes.push_back(nextFloat(line));
+				vertexes.push_back(nextFloat(line));
 			}
-			else if (nextType() == "f") {
-				indices.push_back(nextShort());
-				indices.push_back(nextShort());
-				indices.push_back(nextShort());
+			
+			if (next == "f") {  
+				int i0 = nextInt(line);
+				int i1 = nextInt(line);
+				int i2 = nextInt(line);
+
+				std::cout << i0 << "\n";
+				std::cout << i1 << "\n";
+				std::cout << i2 << "\n";
+
+				indices.push_back(i0);
+				indices.push_back(i1);
+				indices.push_back(i2);
 			}
 		}
 
@@ -73,15 +83,45 @@ private:
 		return type;
 	}
 
-	float nextFloat() {
+	float nextFloat(std::string line) {
 		float vertex;
 		in >> vertex;
 		return vertex;
 	}
 	
-	short nextShort() {
-		short f;
-		in >> f;
-		return f;
+	int nextInt(std::string line) {
+		std::string* parsed = split(line, '/');
+		line = "";
+		for (int i = 0; i < sizeof(parsed); i++) {
+			if (i > 0) {
+				line += "/" + parsed[i];
+			}
+		}
+
+		return std::stoi(parsed[0]);
+	}
+
+	std::string* split(std::string word, char delim) {
+		int splitCount = 0;
+		for (int i = 0; i < word.length(); i++) {
+			if (word.at(i) == delim) {
+				splitCount++;
+			}
+		}
+
+		std::string* splitString = new std::string[splitCount];
+		std::string wordSoFar = "";
+		splitCount = 0;
+		for (int i = 0; i < word.length(); i++) {
+			if (word.at(i) == delim) {
+				splitString[splitCount] = wordSoFar;
+				splitCount++;
+			}
+			else {
+				wordSoFar += word.at(i);
+			}
+		}
+
+		return splitString;
 	}
 };

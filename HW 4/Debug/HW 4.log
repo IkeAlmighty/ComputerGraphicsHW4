@@ -1,5 +1,10 @@
-﻿  HW 4.cpp
-c:\users\isaac\dropbox\college\2017 spring\computer graphics\hw 4\hw 4\objstreamloader.h(34): warning C4018: '<': signed/unsigned mismatch
-c:\users\isaac\dropbox\college\2017 spring\computer graphics\hw 4\hw 4\objstreamloader.h(40): warning C4018: '<': signed/unsigned mismatch
+﻿  Skipping... (no relevant changes detected)
+  stdafx.cpp
+  HW 4.cpp
+c:\users\isaac\dropbox\college\2017 spring\computer graphics\hw 4\hw 4\objstreamloader.h(44): warning C4018: '<': signed/unsigned mismatch
+c:\users\isaac\dropbox\college\2017 spring\computer graphics\hw 4\hw 4\objstreamloader.h(50): warning C4018: '<': signed/unsigned mismatch
+c:\users\isaac\dropbox\college\2017 spring\computer graphics\hw 4\hw 4\objstreamloader.h(106): warning C4018: '<': signed/unsigned mismatch
+c:\users\isaac\dropbox\college\2017 spring\computer graphics\hw 4\hw 4\objstreamloader.h(115): warning C4018: '<': signed/unsigned mismatch
+cl : Command line warning D9028: minimal rebuild failure, reverting to normal build
   HW 4.vcxproj -> C:\Users\Isaac\Dropbox\College\2017 Spring\Computer Graphics\HW 4\Debug\HW 4.exe
   HW 4.vcxproj -> C:\Users\Isaac\Dropbox\College\2017 Spring\Computer Graphics\HW 4\Debug\HW 4.pdb (Partial PDB)
