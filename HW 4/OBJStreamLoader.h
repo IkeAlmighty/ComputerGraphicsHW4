@@ -3,6 +3,8 @@
 #include <iostream>
 #include <vector>
 #include <fstream>
+#include <chrono>
+#include <thread>
 
 class OBJStreamLoader {
 public:
@@ -12,40 +14,51 @@ public:
 		in = std::ifstream();
 		in.open(filepath);
 		if (!in.is_open()) {
-			std::cout << "\nCould not open file: " << filepath;;
+			std::cout << "\nCould not open file: " << filepath;
 			exit(-1);
 		}
 
-		std::string line;
-		while(getline(in, line)) {
-			std::string next = nextType();
-			if (next == "v") {
-				vertexes.push_back(nextFloat(line));
-				vertexes.push_back(nextFloat(line));
-				vertexes.push_back(nextFloat(line));
-			}
-			
-			if (next == "f") {  
-				int i0 = nextInt(line);
-				int i1 = nextInt(line);
-				int i2 = nextInt(line);
+		std::string next;
+		while(in.good()) {
+			try {
+				next = nextWord();
+				//std::cout << "word: " << next << "\n";
+				//std::this_thread::sleep_for(std::chrono::milliseconds(1));
+				if (next == "v") {
+					vertexes.push_back(nextFloat());
+					vertexes.push_back(nextFloat());
+					vertexes.push_back(nextFloat());
+				}
 
-				std::cout << i0 << "\n";
-				std::cout << i1 << "\n";
-				std::cout << i2 << "\n";
+				if (next == "f") {
+					//assumes sets of threes for now.
+					indices.push_back(nextFaceIndex());
+					nextFaceIndex();
+					nextFaceIndex();
 
-				indices.push_back(i0);
-				indices.push_back(i1);
-				indices.push_back(i2);
+					indices.push_back(nextFaceIndex());
+					nextFaceIndex();
+					nextFaceIndex();
+
+					indices.push_back(nextFaceIndex());
+					nextFaceIndex();
+					nextFaceIndex();
+				}
 			}
+			catch (std::exception& e) {
+				std::cout << e.what() << "\n";
+			}
+
 		}
 
-		floatVertexes = new GLfloat[vertexes.size()];
+		//copy the floats into the returnable GLfloat[]
+		floatVertices = new GLfloat[vertexes.size()];
 		for (int i = 0; i < vertexes.size(); i++) {
-			floatVertexes[i] = vertexes.at(i);
+			floatVertices[i] = vertexes.at(i);
 		}
 		sizev = vertexes.size();
 
+		//copy the indexes into the returnable GLushort
 		shortIndices = new GLushort[indices.size()];
 		for (int i = 0; i < indices.size(); i++) {
 			shortIndices[i] = indices[i];
@@ -53,8 +66,8 @@ public:
 		sizei = indices.size();
 	}
 
-	GLfloat* getVertexes() {
-		return floatVertexes;
+	GLfloat* getVertices() {
+		return floatVertices;
 	}
 
 	GLushort* getIndices() {
@@ -71,57 +84,52 @@ public:
 
 private:
 	std::ifstream in;
-	GLfloat* floatVertexes;
+	GLfloat* floatVertices;
 	GLushort* shortIndices;
 
 	int sizev;
 	int sizei;
 
-	std::string nextType() {
-		std::string type;
-		in >> type;
+	//as far as I can tell, the bitwise operation of storing a string
+	//from a file stops at whitespace (tabs, newlines, spaces)
+	std::string nextWord() {
+		std::string type;	
+		in >> std::skipws >> type;//had to use skipws after using noskipws in another nextFaceValue, no idea why
 		return type;
 	}
 
-	float nextFloat(std::string line) {
+	float nextFloat() {
 		float vertex;
 		in >> vertex;
 		return vertex;
 	}
-	
-	int nextInt(std::string line) {
-		std::string* parsed = split(line, '/');
-		line = "";
-		for (int i = 0; i < sizeof(parsed); i++) {
-			if (i > 0) {
-				line += "/" + parsed[i];
-			}
+
+	int nextFaceIndex() {
+		int idx;
+		
+		//init
+		char thisC;
+		in >> thisC;
+		//std::cout << "\t\tfirstC: " << thisC;
+
+		//get first digit
+		while (!isdigit(thisC)) {
+			in >> thisC;
 		}
 
-		return std::stoi(parsed[0]);
-	}
+		//convert first digit (thisC) to number.
+		idx = thisC - '0'; //jeez c is clever
 
-	std::string* split(std::string word, char delim) {
-		int splitCount = 0;
-		for (int i = 0; i < word.length(); i++) {
-			if (word.at(i) == delim) {
-				splitCount++;
-			}
+		//add additional digits
+		in >> std::noskipws >> thisC;
+		//std::cout << ", second is " << thisC << "\n";
+		while (isdigit(thisC) && in.good()) {
+			in >> thisC;
+			idx = idx*10 + (thisC - '0');
+
 		}
-
-		std::string* splitString = new std::string[splitCount];
-		std::string wordSoFar = "";
-		splitCount = 0;
-		for (int i = 0; i < word.length(); i++) {
-			if (word.at(i) == delim) {
-				splitString[splitCount] = wordSoFar;
-				splitCount++;
-			}
-			else {
-				wordSoFar += word.at(i);
-			}
-		}
-
-		return splitString;
+		
+		//std::cout << "\tnextNum: " << idx << "\n";
+		return idx;
 	}
 };
